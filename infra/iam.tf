@@ -18,7 +18,7 @@ resource "aws_iam_role" "api_server_role" {
 resource "aws_iam_policy" "bedrock_policy" {
   name        = "bedrock-policy"
   description = "Policy to allow Bedrock service calls"
-  policy      = jsonencode({
+  policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
