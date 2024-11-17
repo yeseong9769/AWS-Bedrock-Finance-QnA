@@ -55,8 +55,7 @@ resource "aws_lb" "public_lb" {
     aws_subnet.docuQuery_subnet_public2.id
   ]
 
-  enable_deletion_protection       = false
-  enable_cross_zone_load_balancing = true
+  enable_deletion_protection = false
 
   tags = {
     Name = "docuQuery-public-lb"
@@ -112,14 +111,13 @@ resource "aws_lb" "internal_lb" {
   name               = "docuQuery-internal-lb"
   internal           = true
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.api_server_sg.id]
+  security_groups    = [aws_security_group.api_server_lb_sg.id]
   subnets = [
     aws_subnet.docuQuery_subnet_private1.id,
     aws_subnet.docuQuery_subnet_private2.id
   ]
 
-  enable_deletion_protection       = false
-  enable_cross_zone_load_balancing = true
+  enable_deletion_protection = false
 
   tags = {
     Name = "docuQuery-internal-lb"
@@ -127,5 +125,9 @@ resource "aws_lb" "internal_lb" {
 }
 
 output "internal_lb_dns_name" {
-  value = aws_lb.internal_lb.name
+  value = aws_lb.internal_lb.dns_name
+}
+
+output "public_lb_dns_name" {
+  value = aws_lb.public_lb.dns_name
 }
