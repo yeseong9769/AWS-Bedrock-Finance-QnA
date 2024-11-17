@@ -73,8 +73,6 @@ resource "aws_instance" "api_server_1" {
   cd /app
   git clone https://github.com/yeseong9769/docuQuery.git
   pip3 install -r /app/docuQuery/backend/requirements.txt
-  cd /app/docuQuery/backend
-  uvicorn main:app --host 0.0.0.0 --port 8000 &> /var/log/uvicorn.log &
   EOL
 
   tags = {
@@ -89,7 +87,6 @@ resource "aws_instance" "api_server_2" {
   vpc_security_group_ids      = [aws_security_group.api_server_sg.id]
   associate_public_ip_address = false
   key_name                    = aws_key_pair.ec2-key-pair.key_name
-  iam_instance_profile        = aws_iam_instance_profile.api_server_profile.name
   user_data                   = <<-EOL
   #!/bin/bash -xe
 
@@ -99,8 +96,6 @@ resource "aws_instance" "api_server_2" {
   cd /app
   git clone https://github.com/yeseong9769/docuQuery.git
   pip3 install -r /app/docuQuery/backend/requirements.txt
-  cd /app/docuQuery/backend
-  uvicorn main:app --host 0.0.0.0 --port 8000 &> /var/log/uvicorn.log &
   EOL
 
   tags = {
