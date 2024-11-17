@@ -73,7 +73,6 @@ resource "aws_instance" "api_server_1" {
   cd /app
   git clone https://github.com/yeseong9769/docuQuery.git
   pip3 install -r /app/docuQuery/backend/requirements.txt
-  chown -R ec2-user:ec2-user /app/docuQuery
   EOL
 
   tags = {
@@ -97,7 +96,6 @@ resource "aws_instance" "api_server_2" {
   cd /app
   git clone https://github.com/yeseong9769/docuQuery.git
   pip3 install -r /app/docuQuery/backend/requirements.txt
-  chown -R ec2-user:ec2-user /app/docuQuery
   EOL
 
   tags = {
