@@ -32,7 +32,7 @@ resource "aws_instance" "bastion_host" {
 
 #################### Web Server ####################
 resource "aws_instance" "web_server_1" {
-  ami                         = "ami-0de20b1c8590e09c5"
+  ami                         = "ami-0a027398380af6970"
   instance_type               = "t3a.micro"
   subnet_id                   = aws_subnet.docuQuery_subnet_private1.id
   vpc_security_group_ids      = [aws_security_group.web_server_sg.id]
@@ -41,8 +41,8 @@ resource "aws_instance" "web_server_1" {
   user_data                   = <<-EOL
   #!/bin/bash -xe
 
-  yum update -y
-  yum install -y git python3-pip
+  dnf update -y
+  dnf install -y git python3-pip
   mkdir /app
   cd /app
   git clone https://github.com/yeseong9769/docuQuery.git
@@ -59,7 +59,7 @@ resource "aws_instance" "web_server_1" {
 }
 
 resource "aws_instance" "web_server_2" {
-  ami                         = "ami-0de20b1c8590e09c5"
+  ami                         = "ami-0a027398380af6970"
   instance_type               = "t3a.micro"
   subnet_id                   = aws_subnet.docuQuery_subnet_private2.id
   vpc_security_group_ids      = [aws_security_group.web_server_sg.id]
@@ -68,8 +68,8 @@ resource "aws_instance" "web_server_2" {
   user_data                   = <<-EOL
   #!/bin/bash -xe
 
-  yum update -y
-  yum install -y git python3-pip
+  dnf update -y
+  dnf install -y git python3-pip
   mkdir /app
   cd /app
   git clone https://github.com/yeseong9769/docuQuery.git
