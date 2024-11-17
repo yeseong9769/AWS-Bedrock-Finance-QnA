@@ -41,12 +41,15 @@ resource "aws_instance" "web_server_1" {
   user_data                   = <<-EOL
   #!/bin/bash -xe
 
-  dnf update -y
-  dnf install -y git python3-pip
+  apt update
+  apt install -y git python3-pip python3-venv
   mkdir /app
   cd /app
   git clone https://github.com/yeseong9769/docuQuery.git
-  pip3 install -r /app/docuQuery/frontend/requirements.txt
+  cd /app/docuQuery
+  python3 -m venv /app/venv
+  source /app/venv/bin/activate
+  pip install -r /app/docuQuery/frontend/requirements.txt
   cd /app/docuQuery/frontend
   export BACKEND_URL=${aws_lb.internal_lb.dns_name}:8000
   streamlit run main.py --server.port 8080 &> streamlit.log &
@@ -68,7 +71,7 @@ resource "aws_instance" "web_server_2" {
   user_data                   = <<-EOL
   #!/bin/bash -xe
 
-  dnf update -y
+  dnf update
   dnf install -y git python3-pip
   mkdir /app
   cd /app
@@ -84,6 +87,7 @@ resource "aws_instance" "web_server_2" {
   }
 }
 
+#################### API Server ####################
 resource "aws_instance" "api_server_1" {
   ami                         = "ami-0de20b1c8590e09c5"
   instance_type               = "t3a.micro"
