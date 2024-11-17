@@ -11,8 +11,8 @@ resource "aws_key_pair" "ec2-key-pair" {
 
 resource "local_sensitive_file" "ec2-private-key" {
   depends_on      = [aws_key_pair.ec2-key-pair]
-  content         = tls_private_key.ec2-key-pair.private_key_pem
-  filename        = ".ssh/docuQuery-key.pem"
+  content         = tls_private_key.rsa-4096.private_key_pem
+  filename        = "~/.ssh/id_rsa"
   file_permission = "0600"
 }
 
