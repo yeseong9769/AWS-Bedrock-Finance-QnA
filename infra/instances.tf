@@ -69,8 +69,10 @@ resource "aws_instance" "api_server_1" {
 
   yum update -y
   yum install -y git python3-pip
+  cd /home/ec2-user/
   git clone https://github.com/yeseong9769/docuQuery.git
   pip3 install -r docuQuery/backend/requirements.txt
+  chown -R ec2-user:ec2-user docuQuery
   EOL
 
   tags = {
@@ -90,8 +92,10 @@ resource "aws_instance" "api_server_2" {
 
   yum update -y
   yum install -y git python3-pip
+  cd /home/ec2-user/
   git clone https://github.com/yeseong9769/docuQuery.git
   pip3 install -r docuQuery/backend/requirements.txt
+  chown -R ec2-user:ec2-user docuQuery
   EOL
 
   tags = {
