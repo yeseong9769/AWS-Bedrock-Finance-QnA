@@ -57,7 +57,6 @@ resource "aws_instance" "web_server_2" {
   }
 }
 
-#################### API Server ####################
 resource "aws_instance" "api_server_1" {
   ami                         = "ami-0de20b1c8590e09c5"
   instance_type               = "t3a.micro"
@@ -65,6 +64,14 @@ resource "aws_instance" "api_server_1" {
   vpc_security_group_ids      = [aws_security_group.api_server_sg.id]
   associate_public_ip_address = false
   key_name                    = aws_key_pair.ec2-key-pair.key_name
+  user_data                   = <<-EOL
+  #!/bin/bash -xe
+
+  yum update -y
+  yum install -y git python3-pip
+  git clone https://github.com/yeseong9769/docuQuery.git
+  pip3 install -r docuQuery/backend/requirements.txt
+  EOL
 
   tags = {
     Name = "docuQuery-api-server-1"
@@ -78,6 +85,14 @@ resource "aws_instance" "api_server_2" {
   vpc_security_group_ids      = [aws_security_group.api_server_sg.id]
   associate_public_ip_address = false
   key_name                    = aws_key_pair.ec2-key-pair.key_name
+  user_data                   = <<-EOL
+  #!/bin/bash -xe
+
+  yum update -y
+  yum install -y git python3-pip
+  git clone https://github.com/yeseong9769/docuQuery.git
+  pip3 install -r docuQuery/backend/requirements.txt
+  EOL
 
   tags = {
     Name = "docuQuery-api-server-2"
