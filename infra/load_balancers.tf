@@ -1,9 +1,55 @@
 #################### Public Load Balancer ####################
+resource "aws_lb_target_group" "web_server_tg" {
+  name     = "docuQuery-web-server-tg"
+  port     = 8080
+  protocol = "HTTP"
+  vpc_id   = aws_vpc.docuQuery_vpc.id
+
+  health_check {
+    path                = "/healthz"
+    protocol            = "HTTP"
+    port                = "traffic-port"
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+  }
+
+  tags = {
+    Name = "docuQuery-web-server-tg"
+  }
+}
+
+resource "aws_lb_target_group_attachment" "web_server_1_attachment" {
+  target_group_arn = aws_lb_target_group.web_server_tg.arn
+  target_id        = aws_instance.web_server_1.id
+  port             = 8080
+}
+
+resource "aws_lb_target_group_attachment" "web_server_2_attachment" {
+  target_group_arn = aws_lb_target_group.web_server_tg.arn
+  target_id        = aws_instance.web_server_2.id
+  port             = 8080
+}
+
+
+resource "aws_lb_listener" "public_lb_listener" {
+  load_balancer_arn = aws_lb.public_lb.arn
+  port              = 8080
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.web_server_tg.arn
+  }
+}
+
+
 resource "aws_lb" "public_lb" {
   name               = "docuQuery-public-lb"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.web_server_sg.id]
+  security_groups    = [aws_security_group.web_server_lb_sg.id]
   subnets = [
     aws_subnet.docuQuery_subnet_public1.id,
     aws_subnet.docuQuery_subnet_public2.id
@@ -78,4 +124,8 @@ resource "aws_lb" "internal_lb" {
   tags = {
     Name = "docuQuery-internal-lb"
   }
+}
+
+output "internal_lb_dns_name" {
+  value = aws_lb.internal_lb.name
 }

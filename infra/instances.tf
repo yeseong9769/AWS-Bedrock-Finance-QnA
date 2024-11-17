@@ -38,6 +38,20 @@ resource "aws_instance" "web_server_1" {
   vpc_security_group_ids      = [aws_security_group.web_server_sg.id]
   associate_public_ip_address = false
   key_name                    = aws_key_pair.ec2-key-pair.key_name
+  user_data                   = <<-EOL
+  #!/bin/bash -xe
+
+  yum update -y
+  yum install -y git python3-pip
+  mkdir /app
+  cd /app
+  git clone https://github.com/yeseong9769/docuQuery.git
+  pip3 install -r /app/docuQuery/frontend/requirements.txt
+  cd /app/docuQuery/frontend
+  export BACKEND_URL=${aws_lb.internal_lb.dns_name}:8000
+  streamlit run main.py --server.port 8080 &> streamlit.log &
+  EOL
+
 
   tags = {
     Name = "docuQuery-web-server-1"
@@ -51,6 +65,19 @@ resource "aws_instance" "web_server_2" {
   vpc_security_group_ids      = [aws_security_group.web_server_sg.id]
   associate_public_ip_address = false
   key_name                    = aws_key_pair.ec2-key-pair.key_name
+  user_data                   = <<-EOL
+  #!/bin/bash -xe
+
+  yum update -y
+  yum install -y git python3-pip
+  mkdir /app
+  cd /app
+  git clone https://github.com/yeseong9769/docuQuery.git
+  pip3 install -r /app/docuQuery/frontend/requirements.txt
+  cd /app/docuQuery/frontend
+  export BACKEND_URL=${aws_lb.internal_lb.dns_name}:8000
+  streamlit run main.py --server.port 8080 &> streamlit.log &
+  EOL
 
   tags = {
     Name = "docuQuery-web-server-2"

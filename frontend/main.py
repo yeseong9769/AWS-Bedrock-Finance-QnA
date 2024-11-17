@@ -5,12 +5,13 @@
 
 import streamlit as st
 import requests
+import os
 
 # Page title
 st.set_page_config(page_title='Knowledge Bases for Amazon Bedrock and LangChain 🦜️🔗')
 
 # Backend API URL
-BACKEND_URL = "http://192.168.0.29:8000"  # FastAPI 서버 주소
+BACKEND_URL = os.getenv('BACKEND_URL', 'http://localhost:8000')
 
 # Clear Chat History function
 def clear_screen():
