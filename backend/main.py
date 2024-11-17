@@ -111,3 +111,7 @@ async def chat_stream(request: ChatRequest):
             yield f"{chunk}\n"
 
     return generate()
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
