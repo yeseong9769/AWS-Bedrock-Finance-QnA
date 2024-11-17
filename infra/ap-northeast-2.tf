@@ -8,10 +8,10 @@ resource "aws_internet_gateway" "docuQuery_igw" {
 }
 
 ########## EIP ##########
-resource "aws_eip" "docuQuery_eip_ap_northeast_2a" {
+resource "aws_eip" "bastion-host-eip" {
   domain = "vpc"
   tags = {
-    Name = "docuQuery-eip-ap-northeast-2a"
+    Name = "docuQuery-bastion-host-eip"
   }
 }
 
