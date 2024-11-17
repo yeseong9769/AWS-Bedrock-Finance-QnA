@@ -6,6 +6,6 @@ output "instance_public_key" {
 
 output "instance_private_key" {
   description = "Private key of docuQuery-key-pair"
-  value       =  tls_private_key.docuQuery-key.private_key_pem
+  value       = tls_private_key.docuQuery-key.private_key_pem
   sensitive   = true
 }

@@ -28,8 +28,8 @@ resource "aws_route_table" "docuQuery_rtb_private1" {
   vpc_id = aws_vpc.docuQuery_vpc.id
 
   route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_nat_gateway.docuQuery_nat_gateway.id
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.docuQuery_nat_gateway.id
   }
 
   tags = {
@@ -47,8 +47,8 @@ resource "aws_route_table" "docuQuery_rtb_private2" {
   vpc_id = aws_vpc.docuQuery_vpc.id
 
   route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_nat_gateway.docuQuery_nat_gateway.id
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.docuQuery_nat_gateway.id
   }
 
   tags = {
@@ -66,12 +66,12 @@ resource "aws_route_table" "docuQuery_rtb_private3" {
   vpc_id = aws_vpc.docuQuery_vpc.id
 
   route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_nat_gateway.docuQuery_nat_gateway.id
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.docuQuery_nat_gateway.id
   }
 
   tags = {
-    Name = "docuQuery-rtb-private2-ap-northeast-2a"
+    Name = "docuQuery-rtb-private3-ap-northeast-2a"
   }
 }
 
@@ -80,18 +80,17 @@ resource "aws_route_table_association" "docuQuery_rtb_private3_association" {
   route_table_id = aws_route_table.docuQuery_rtb_private3.id
 }
 
-
 #################### Private 4 ####################
 resource "aws_route_table" "docuQuery_rtb_private4" {
   vpc_id = aws_vpc.docuQuery_vpc.id
 
   route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_nat_gateway.docuQuery_nat_gateway.id
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.docuQuery_nat_gateway.id
   }
 
   tags = {
-    Name = "docuQuery-rtb-private2-ap-northeast-2c"
+    Name = "docuQuery-rtb-private4-ap-northeast-2c"
   }
 }
 
