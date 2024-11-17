@@ -10,7 +10,7 @@ import requests
 st.set_page_config(page_title='Knowledge Bases for Amazon Bedrock and LangChain 🦜️🔗')
 
 # Backend API URL
-BACKEND_URL = "http://localhost:8000"  # FastAPI 서버 주소
+BACKEND_URL = "http://192.168.0.29:8000"  # FastAPI 서버 주소
 
 # Clear Chat History function
 def clear_screen():
