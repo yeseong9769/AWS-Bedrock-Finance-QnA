@@ -51,6 +51,7 @@ resource "aws_instance" "web_server_1" {
   source /app/venv/bin/activate
   pip install -r /app/docuQuery/frontend/requirements.txt
   cd /app/docuQuery/frontend
+  touch /app/docuQuery/frontend/.streamlit/secrets.toml
   echo "BACKEND_URL = \"http://${aws_lb.internal_lb.dns_name}:8000\"" > /app/docuQuery/frontend/.streamlit/secrets.toml
   streamlit run main.py --server.port 8080 --logger.level=warning &> streamlit.log &
   EOL
