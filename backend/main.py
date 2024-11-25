@@ -15,38 +15,43 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_aws import ChatBedrock
 from langchain_aws import AmazonKnowledgeBasesRetriever
 
+# FastAPI 애플리케이션 초기화
 app = FastAPI()
 
-# CORS 설정 - Streamlit과 통신을 위해 필요
+# CORS 설정
+# Streamlit 프론트엔드와 통신을 허용하기 위한 설정
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 실제 운영환경에서는 구체적인 origin을 지정하세요
+    allow_origins=["*"],  # 운영 환경에서는 특정 origin만 허용하도록 수정 권장
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["POST"],
     allow_headers=["*"],
 )
 
 # ------------------------------------------------------
-# Amazon Bedrock - settings
+# Amazon Bedrock 설정
 
+# Bedrock 런타임 클라이언트 생성
 bedrock_runtime = boto3.client(
     service_name="bedrock-runtime",
-    region_name="us-east-1",
+    region_name="us-east-1",  # AWS 리전
 )
 
+# 사용 모델 ID와 기본 파라미터 설정
 model_id = "anthropic.claude-3-haiku-20240307-v1:0"
-
 model_kwargs = {
-    "max_tokens": 2048,
-    "temperature": 0.3,
-    "top_k": 5,
-    "top_p": 0.95,
-    "stop_sequences": ["\n\nHuman"],
+    "max_tokens": 2048,  # 최대 생성 토큰 수
+    "temperature": 0.3,  # 생성의 다양성 조절
+    "top_k": 5,          # 상위 K개의 토큰만 고려
+    "top_p": 0.95,       # 누적 확률 기반 토큰 필터링
+    "stop_sequences": ["\n\nHuman"],  # 출력 중단 시퀀스
 }
 
 # ------------------------------------------------------
-# LangChain - RAG chain with citations
+# LangChain 설정 - RAG (Retrieval-Augmented Generation) 체인
 
+# 프롬프트 템플릿 정의
+# 입력 컨텍스트와 질문을 기반으로 적절한 응답을 생성
 prompt = PromptTemplate(
     template="""
         "task_instructions" : [
@@ -70,48 +75,61 @@ prompt = PromptTemplate(
 
         "output": 
         """,
-    input_variables=["context", "question"]
+    input_variables=["context", "question"]  # 입력 변수 정의
 )
 
-# Amazon Bedrock - KnowledgeBase Retriever 
+# Amazon Bedrock - Knowledge Base Retriever 설정
 retriever = AmazonKnowledgeBasesRetriever(
-    knowledge_base_id="ZR7PIA4I4M",
-    retrieval_config={"vectorSearchConfiguration": {"numberOfResults": 2}},
+    knowledge_base_id="ZR7PIA4I4M",  # 지식베이스 ID
+    retrieval_config={"vectorSearchConfiguration": {"numberOfResults": 2}},  # 검색 결과 개수 제한
 )
 
+# Bedrock Chat 모델 구성
 model = ChatBedrock(
-    client=bedrock_runtime,
-    model_id=model_id,
-    model_kwargs=model_kwargs,
+    client=bedrock_runtime,  # Bedrock 런타임 클라이언트
+    model_id=model_id,       # 모델 ID
+    model_kwargs=model_kwargs,  # 모델 매개변수
 )
 
+# RAG 체인 정의
 chain = (
-    RunnableParallel({"context": retriever, "question": RunnablePassthrough()})
-    .assign(response=prompt | model | StrOutputParser())
-    .pick(["response", "context"])
+    RunnableParallel({"context": retriever, "question": RunnablePassthrough()})  # 입력 처리
+    .assign(response=prompt | model | StrOutputParser())  # 프롬프트, 모델, 출력 파싱 연결
+    .pick(["response", "context"])  # 최종 응답 데이터 선택
 )
 
 # ------------------------------------------------------
-# FastAPI routes
+# FastAPI 라우트 정의
 
+# 요청 데이터 모델 정의
 class ChatRequest(BaseModel):
-    prompt: str
+    prompt: str  # 사용자 입력 프롬프트
 
 @app.post("/chat")
 async def chat(request: ChatRequest) -> Dict:
-    """Non-streaming chat endpoint"""
-    response = chain.invoke(request.prompt)
+    """
+    Non-streaming chat endpoint
+    한 번에 전체 응답을 반환하는 엔드포인트
+    """
+    response = chain.invoke(request.prompt)  # 체인을 호출하여 응답 생성
     return response
 
 @app.post("/chat/stream")
 async def chat_stream(request: ChatRequest):
-    """Streaming chat endpoint"""
+    """
+    Streaming chat endpoint
+    응답을 스트리밍 방식으로 반환하는 엔드포인트
+    """
     async def generate():
-        for chunk in chain.stream(request.prompt):
-            yield f"{chunk}\n"
+        for chunk in chain.stream(request.prompt):  # 체인 스트림 호출
+            yield f"{chunk}\n"  # 실시간으로 응답 조각 반환
 
     return generate()
 
 @app.get("/health")
 async def health():
-    return {"status": "ok"}
+    """
+    Health check endpoint
+    서버 상태 확인용 엔드포인트
+    """
+    return {"status": "ok"}  # 상태 반환

@@ -51,7 +51,7 @@ resource "aws_instance" "web_server_1" {
   source /app/venv/bin/activate
   pip install -r /app/docuQuery/frontend/requirements.txt
   cd /app/docuQuery/frontend
-  export BACKEND_URL=http://${aws_lb.internal_lb.dns_name}:8000
+  echo "BACKEND_URL = \"http://${aws_lb.internal_lb.dns_name}:8000\"" > /app/docuQuery/frontend/secrets.toml
   streamlit run main.py --server.port 8080 --logger.level=warning &> streamlit.log &
   EOL
 
@@ -80,7 +80,7 @@ resource "aws_instance" "web_server_2" {
   source /app/venv/bin/activate
   pip install -r /app/docuQuery/frontend/requirements.txt
   cd /app/docuQuery/frontend
-  export BACKEND_URL=http://${aws_lb.internal_lb.dns_name}:8000
+  echo "BACKEND_URL = \"http://${aws_lb.internal_lb.dns_name}:8000\"" > /app/docuQuery/frontend/secrets.toml
   streamlit run main.py --server.port 8080 --logger.level=warning &> streamlit.log &
   EOL
 

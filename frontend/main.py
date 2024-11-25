@@ -3,78 +3,53 @@
 # Streamlit Frontend Application
 # ------------------------------------------------------
 
-import streamlit as st
-import requests
-import os
+import streamlit as st 
+import requests         
 
-# Page title
-st.set_page_config(page_title='Knowledge Bases for Amazon Bedrock and LangChain 🦜️🔗')
+st.set_page_config(page_title='재정정보 질의응답 시스템')
+BACKEND_URL = st.secrets["BACKEND_URL"]
 
-# Backend API URL
-BACKEND_URL = os.getenv('BACKEND_URL', 'http://localhost:8000')
-
-# Clear Chat History function
+# 채팅 기록 초기화 함수
 def clear_screen():
-    st.session_state.messages = [{"role": "assistant", "content": "How may I assist you today?"}]
+    st.session_state.messages = [{"role": "assistant", "content": "안녕하세요. 대한민국 재정정보 질의응답 시스템입니다. 궁금하신 내용을 입력해주세요."}]
 
+# 사이드바 구성
 with st.sidebar:
-    st.title('Knowledge Bases for Amazon Bedrock and LangChain 🦜️🔗')
+    st.title('재정정보 질의응답 시스템')
     streaming_on = st.toggle('Streaming')
     st.button('Clear Screen', on_click=clear_screen)
 
-# Store LLM generated responses
+# 세션 상태 초기화
 if "messages" not in st.session_state.keys():
-    st.session_state.messages = [{"role": "assistant", "content": "How may I assist you today?"}]
+    clear_screen()
 
-# Display chat messages
+# 이전 메시지 표시
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.write(message["content"])
 
-# Chat Input - User Prompt 
+# 사용자 입력 처리
 if prompt := st.chat_input():
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.write(prompt)
 
     if streaming_on:
-        # Streaming mode
+        # 스트리밍 모드
         with st.chat_message("assistant"):
             placeholder = st.empty()
-            
-            # Stream from backend
-            response = requests.post(
-                f"{BACKEND_URL}/chat/stream",
-                json={"prompt": prompt},
-                stream=True
-            )
-            
+            response = requests.post(f"{BACKEND_URL}/chat/stream", json={"prompt": prompt}, stream=True)
             full_response = ''
-            full_context = None
-            
             for line in response.iter_lines():
                 if line:
                     chunk = eval(line.decode('utf-8'))
                     if 'response' in chunk:
                         full_response += chunk['response']
                         placeholder.markdown(full_response)
-                    else:
-                        full_context = chunk
-                        
-            placeholder.markdown(full_response)
-            if full_context:
-                with st.expander("Show source details >"):
-                    st.write(full_context)
             st.session_state.messages.append({"role": "assistant", "content": full_response})
     else:
-        # Non-streaming mode
+        # 비스트리밍 모드
         with st.chat_message("assistant"):
-            response = requests.post(
-                f"{BACKEND_URL}/chat",
-                json={"prompt": prompt}
-            ).json()
-            
+            response = requests.post(f"{BACKEND_URL}/chat", json={"prompt": prompt}).json()
             st.write(response['response'])
-            with st.expander("Show source details >"):
-                st.write(response['context'])
             st.session_state.messages.append({"role": "assistant", "content": response['response']})
