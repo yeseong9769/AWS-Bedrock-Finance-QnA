@@ -81,8 +81,10 @@ resource "aws_instance" "web_server_2" {
   python3 -m venv /app/venv
   source /app/venv/bin/activate
   pip install -r /app/docuQuery/frontend/requirements.txt
-  cd /app/docuQuery/frontend
+  mkdir /app/docuQuery/frontend/.streamlit
+  touch /app/docuQuery/frontend/.streamlit/secrets.toml
   echo "BACKEND_URL = \"http://${aws_lb.internal_lb.dns_name}:8000\"" > /app/docuQuery/frontend/.streamlit/secrets.toml
+  cd /app/docuQuery/frontend
   streamlit run main.py --server.port 8080 --logger.level=warning &> streamlit.log &
   EOL
 
@@ -177,7 +179,7 @@ resource "aws_instance" "api_server_2" {
   git clone https://github.com/yeseong9769/docuQuery.git
   pip3 install -r /app/docuQuery/backend/requirements.txt
   cd /app/docuQuery/backend
-  uvicorn main:app --host 0.0.0.0 --port 8000 & uvicorn.log &
+  uvicorn main:app --host 0.0.0.0 --port 8000 &> uvicorn.log &
   EOL
 
   tags = {
