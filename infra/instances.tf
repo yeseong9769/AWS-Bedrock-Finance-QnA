@@ -51,7 +51,7 @@ resource "aws_instance" "web_server_1" {
   source /app/venv/bin/activate
   pip install -r /app/docuQuery/frontend/requirements.txt
   cd /app/docuQuery/frontend
-  echo "BACKEND_URL = \"http://${aws_lb.internal_lb.dns_name}:8000\"" > /app/docuQuery/frontend/secrets.toml
+  echo "BACKEND_URL = \"http://${aws_lb.internal_lb.dns_name}:8000\"" > /app/docuQuery/frontend/.streamlit/secrets.toml
   streamlit run main.py --server.port 8080 --logger.level=warning &> streamlit.log &
   EOL
 
@@ -80,13 +80,50 @@ resource "aws_instance" "web_server_2" {
   source /app/venv/bin/activate
   pip install -r /app/docuQuery/frontend/requirements.txt
   cd /app/docuQuery/frontend
-  echo "BACKEND_URL = \"http://${aws_lb.internal_lb.dns_name}:8000\"" > /app/docuQuery/frontend/secrets.toml
+  echo "BACKEND_URL = \"http://${aws_lb.internal_lb.dns_name}:8000\"" > /app/docuQuery/frontend/.streamlit/secrets.toml
   streamlit run main.py --server.port 8080 --logger.level=warning &> streamlit.log &
   EOL
 
   tags = {
     Name = "docuQuery-web-server-2"
   }
+}
+
+resource "aws_iam_role" "bedrock_access_role" {
+  name = "bedrock-access-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "bedrock_access" {
+  name   = "bedrock-access-policy"
+  role   = aws_iam_role.bedrock_access_role.id
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect   = "Allow",
+        Action   = ["bedrock:InvokeModel", "bedrock:ListFoundationModels"],
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_instance_profile" "bedrock_access_profile" {
+  name = "bedrock-access-instance-profile"
+  role = aws_iam_role.bedrock_access_role.name
 }
 
 #################### API Server ####################
@@ -97,6 +134,7 @@ resource "aws_instance" "api_server_1" {
   vpc_security_group_ids      = [aws_security_group.api_server_sg.id]
   associate_public_ip_address = false
   key_name                    = aws_key_pair.ec2-key-pair.key_name
+  iam_instance_profile   = aws_iam_instance_profile.bedrock_access_profile.name
   user_data                   = <<-EOL
   #!/bin/bash -xe
 
@@ -106,6 +144,8 @@ resource "aws_instance" "api_server_1" {
   cd /app
   git clone https://github.com/yeseong9769/docuQuery.git
   pip3 install -r /app/docuQuery/backend/requirements.txt
+  cd /app/docuQuery/backend
+  uvicorn main:app --host 0.0.0.0 --port 8000 &> uvicorn.log &
   EOL
 
   tags = {
@@ -120,6 +160,7 @@ resource "aws_instance" "api_server_2" {
   vpc_security_group_ids      = [aws_security_group.api_server_sg.id]
   associate_public_ip_address = false
   key_name                    = aws_key_pair.ec2-key-pair.key_name
+  iam_instance_profile   = aws_iam_instance_profile.bedrock_access_profile.name
   user_data                   = <<-EOL
   #!/bin/bash -xe
 
@@ -129,6 +170,8 @@ resource "aws_instance" "api_server_2" {
   cd /app
   git clone https://github.com/yeseong9769/docuQuery.git
   pip3 install -r /app/docuQuery/backend/requirements.txt
+  cd /app/docuQuery/backend
+  uvicorn main:app --host 0.0.0.0 --port 8000 & uvicorn.log &
   EOL
 
   tags = {

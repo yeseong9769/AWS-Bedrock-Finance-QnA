@@ -81,7 +81,8 @@ prompt = PromptTemplate(
 # Amazon Bedrock - Knowledge Base Retriever 설정
 retriever = AmazonKnowledgeBasesRetriever(
     knowledge_base_id="ZR7PIA4I4M",  # 지식베이스 ID
-    retrieval_config={"vectorSearchConfiguration": {"numberOfResults": 2}},  # 검색 결과 개수 제한
+    retrieval_config={"vectorSearchConfiguration": {"numberOfResults": 2}},
+    client=bedrock_runtime  # 검색 결과 개수 제한
 )
 
 # Bedrock Chat 모델 구성
