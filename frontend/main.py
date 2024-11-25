@@ -40,16 +40,24 @@ if prompt := st.chat_input():
             placeholder = st.empty()
             response = requests.post(f"{BACKEND_URL}/chat/stream", json={"prompt": prompt}, stream=True)
             full_response = ''
+            full_context = None
             for line in response.iter_lines():
                 if line:
                     chunk = eval(line.decode('utf-8'))
                     if 'response' in chunk:
                         full_response += chunk['response']
                         placeholder.markdown(full_response)
+                    else:
+                        full_context = chunk
+            if full_context:
+                with st.expander("Source Document > "): 
+                    st.write(full_context)
             st.session_state.messages.append({"role": "assistant", "content": full_response})
     else:
         # 비스트리밍 모드
         with st.chat_message("assistant"):
             response = requests.post(f"{BACKEND_URL}/chat", json={"prompt": prompt}).json()
             st.write(response['response'])
+            with st.expander("Source Document > "): 
+                st.write(response['context'])
             st.session_state.messages.append({"role": "assistant", "content": response['response']})
