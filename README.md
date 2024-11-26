@@ -37,7 +37,7 @@ Amazon Bedrock은 AI 모델 구축 및 운영에 소요되는 시간을 줄이�
 - **Amazon Bedrock KnowledgeBase:**
   - **Anthropic Claude 3 Haiku**
   - **Titan Embeddings G1 - Text v1.2:** 텍스트 데이터를 임베딩하여 벡터화하는 데 사용되는 고성능 모델로, 효율적인 유사도 검색을 가능하게 합니다.
-- ![Pinecone](https://img.shields.io/badge/Pinecone-1A73E8?style=flat&logo=Pinboard&logoColor=white): 벡터 데이터베이스로서, 임베딩된 데이터를 효율적으로 저장하고 유사도 검색을 수행합니다.
+- ![Pinecone](https://img.shields.io/badge/Pinecone-1A73E8?style=flat&logo=database&logoColor=white): 벡터 데이터베이스로서, 임베딩된 데이터를 효율적으로 저장하고 유사도 검색을 수행합니다.
 
 ## 프로세스 흐름
 
