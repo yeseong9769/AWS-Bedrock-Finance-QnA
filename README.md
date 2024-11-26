@@ -105,6 +105,7 @@ Amazon Bedrock은 AI 모델 구축 및 운영에 소요되는 시간을 줄이�
 - **Kubernetes 환경 지원:** ECS 기반에서 EKS로의 확장을 통해 Kubernetes 환경에서의 배포 및 관리를 지원
 - **Bedrock 서비스 이중화:** 현재 us-east-1에 있는 Bedrock만을 이용하고 있지만, cross-region inference를 통해 이중화를 구현
 - **모니터링:** 시스템 성능과 안정성을 실시간으로 모니터링하기 위해 AWS CloudWatch와 같은 모니터링 도구를 도입
+- Route 53
 
 ### CI/CD
 - **자동화 배포 파이프라인 구축:** GitHub Actions와 Terraform을 결합하여 코드 변경 시 자동으로 배포되는 CI/CD 파이프라인을 구축
