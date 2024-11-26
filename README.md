@@ -108,7 +108,6 @@ Amazon Bedrock은 AI 모델 구축 및 운영에 소요되는 시간을 줄이�
 
 ### CI/CD
 - **자동화 배포 파이프라인 구축:** GitHub Actions와 Terraform을 결합하여 코드 변경 시 자동으로 배포되는 CI/CD 파이프라인을 구축
-- **테스트 자동화:** 주요 코드 업데이트 시 Lint 및 Unit Test를 자동으로 실행하여 코드 품질을 유지
 
 ## 프로젝트 특징
 - **Amazon Bedrock 활용:** Amazon Bedrock을 통한 다양한 생성형 AI 모델의 손쉬운 통합과 관리로 신속한 답변 생성을 구현했습니다.
