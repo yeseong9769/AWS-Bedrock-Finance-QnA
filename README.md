@@ -63,7 +63,8 @@ Amazon Bedrock은 AI 모델 구축 및 운영에 소요되는 시간을 줄이�
 ---
 
 ## 시스템 인프라 구조
-![시스템 인프라 구조](https://github.com/user-attachments/assets/57732822-3979-4b90-8e31-a9bb774b7164)
+![시스템 인프라 구조](https://github.com/user-attachments/assets/20a4af29-3861-4ea8-946a-e800dbeab745)
+
 
 ---
 
