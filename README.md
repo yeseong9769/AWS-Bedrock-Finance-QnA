@@ -111,7 +111,3 @@ Amazon Bedrock은 AI 모델 구축 및 운영에 소요되는 시간을 줄이�
 ### CI/CD
 - **자동화 배포 파이프라인 구축:** GitHub Actions와 Terraform을 결합하여 코드 변경 시 자동으로 배포되는 CI/CD 파이프라인을 구축
 
-## 프로젝트 특징
-- **Amazon Bedrock 활용:** Amazon Bedrock을 통한 다양한 생성형 AI 모델의 손쉬운 통합과 관리로 신속한 답변 생성을 구현했습니다.
-- **RAG 방식의 정확도 향상:** Retrieval-Augmented Generation을 활용하여 단순한 QA 시스템보다 높은 정확도의 답변을 제공합니다.
-- **벡터 데이터베이스의 효율적 활용:** Pinecone을 사용한 고속 유사도 검색으로 대규모 데이터에서도 빠른 응답 시간을 보장합니다.
