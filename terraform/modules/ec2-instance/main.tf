@@ -20,8 +20,8 @@ resource "local_sensitive_file" "ec2-private-key" {
 resource "aws_instance" "bastion_host" {
   ami                         = "ami-0de20b1c8590e09c5"
   instance_type               = "t3a.nano"
-  subnet_id                   = aws_subnet.docuQuery_subnet_public2.id
-  vpc_security_group_ids      = [aws_security_group.bastion_host_sg.id]
+  subnet_id                   = var.public_subnet_ids[1]
+  vpc_security_group_ids      = [var.security_group_ids[0]] # bastion host security group
   associate_public_ip_address = true
   key_name                    = aws_key_pair.ec2-key-pair.key_name
 
@@ -34,8 +34,8 @@ resource "aws_instance" "bastion_host" {
 resource "aws_instance" "web_server_1" {
   ami                         = "ami-0a027398380af6970"
   instance_type               = "t3a.micro"
-  subnet_id                   = aws_subnet.docuQuery_subnet_private1.id
-  vpc_security_group_ids      = [aws_security_group.web_server_sg.id]
+  subnet_id                   = var.private_subnet_ids[0] # private subnet 1
+  vpc_security_group_ids      = [var.security_group_ids[1]] # web server security group
   associate_public_ip_address = false
   key_name                    = aws_key_pair.ec2-key-pair.key_name
   user_data                   = <<-EOL
@@ -53,7 +53,7 @@ resource "aws_instance" "web_server_1" {
   pip install -r /app/docuQuery/frontend/requirements.txt
   mkdir /app/docuQuery/frontend/.streamlit
   touch /app/docuQuery/frontend/.streamlit/secrets.toml
-  echo "BACKEND_URL = \"http://${aws_lb.internal_lb.dns_name}:8000\"" > /app/docuQuery/frontend/.streamlit/secrets.toml
+  echo "BACKEND_URL = \"http://${var.internal_lb_dns_name}:8000\"" > /app/docuQuery/frontend/.streamlit/secrets.toml
   cd /app/docuQuery/frontend
   streamlit run main.py --server.port 8080 --logger.level=warning &> streamlit.log &
   EOL
@@ -66,8 +66,8 @@ resource "aws_instance" "web_server_1" {
 resource "aws_instance" "web_server_2" {
   ami                         = "ami-0a027398380af6970"
   instance_type               = "t3a.micro"
-  subnet_id                   = aws_subnet.docuQuery_subnet_private2.id
-  vpc_security_group_ids      = [aws_security_group.web_server_sg.id]
+  subnet_id                   = var.private_subnet_ids[1] # private subnet 2
+  vpc_security_group_ids      = [var.security_group_ids[1]] # web server security group
   associate_public_ip_address = false
   key_name                    = aws_key_pair.ec2-key-pair.key_name
   user_data                   = <<-EOL
@@ -85,7 +85,7 @@ resource "aws_instance" "web_server_2" {
   pip install -r /app/docuQuery/frontend/requirements.txt
   mkdir /app/docuQuery/frontend/.streamlit
   touch /app/docuQuery/frontend/.streamlit/secrets.toml
-  echo "BACKEND_URL = \"http://${aws_lb.internal_lb.dns_name}:8000\"" > /app/docuQuery/frontend/.streamlit/secrets.toml
+  echo "BACKEND_URL = \"http://${var.internal_lb_dns_name}:8000\"" > /app/docuQuery/frontend/.streamlit/secrets.toml
   cd /app/docuQuery/frontend
   streamlit run main.py --server.port 8080 --logger.level=warning &> streamlit.log &
   EOL
@@ -140,8 +140,8 @@ resource "aws_iam_instance_profile" "bedrock_access_profile" {
 resource "aws_instance" "api_server_1" {
   ami                         = "ami-0de20b1c8590e09c5"
   instance_type               = "t3a.micro"
-  subnet_id                   = aws_subnet.docuQuery_subnet_private3.id
-  vpc_security_group_ids      = [aws_security_group.api_server_sg.id]
+  subnet_id                   = var.private_subnet_ids[2] # private subnet 3
+  vpc_security_group_ids      = [var.security_group_ids[2]] # api server security group
   associate_public_ip_address = false
   key_name                    = aws_key_pair.ec2-key-pair.key_name
   iam_instance_profile        = aws_iam_instance_profile.bedrock_access_profile.name
@@ -167,8 +167,8 @@ resource "aws_instance" "api_server_1" {
 resource "aws_instance" "api_server_2" {
   ami                         = "ami-0de20b1c8590e09c5"
   instance_type               = "t3a.micro"
-  subnet_id                   = aws_subnet.docuQuery_subnet_private4.id
-  vpc_security_group_ids      = [aws_security_group.api_server_sg.id]
+  subnet_id                   = var.private_subnet_ids[3] # private subnet 4
+  vpc_security_group_ids      = [var.security_group_ids[2]] # api server security group
   associate_public_ip_address = false
   key_name                    = aws_key_pair.ec2-key-pair.key_name
   iam_instance_profile        = aws_iam_instance_profile.bedrock_access_profile.name
