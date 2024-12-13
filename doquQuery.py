@@ -55,7 +55,7 @@ prompt = PromptTemplate(
 
 # Amazon Bedrock - KnowledgeBase Retriever 
 retriever = AmazonKnowledgeBasesRetriever(
-    knowledge_base_id="ZR7PIA4I4M",
+    knowledge_base_id="YOUR_KNOWLEDGE_BASE_ID",
     retrieval_config={"vectorSearchConfiguration": {"numberOfResults": 2}},
 )
 

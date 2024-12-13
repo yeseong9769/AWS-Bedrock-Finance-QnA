@@ -1,20 +1,21 @@
 terraform {
   required_providers {
     aws = {
-      source = "hashicorp/aws"
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
     }
   }
 }
 
 provider "aws" {
-  region                   = "ap-northeast-2"
-  shared_credentials_files = [".aws/credentials"]
+  region                   = var.region
+  shared_credentials_files = [var.credentials_file]
 }
 
 provider "aws" {
   alias                    = "bedrock"
   region                   = "us-east-1"
-  shared_credentials_files = [".aws/credentials"]
+  shared_credentials_files = [var.credentials_file]
 }
 
 module "network" {
@@ -22,8 +23,8 @@ module "network" {
 }
 
 module "ec2-instance" {
-  source = "./modules/ec2-instance"
-  public_subnet_ids = module.network.public_subnet_ids
+  source             = "./modules/ec2-instance"
+  public_subnet_ids  = module.network.public_subnet_ids
   private_subnet_ids = module.network.private_subnet_ids
 
   security_group_ids = [
@@ -39,7 +40,7 @@ module "load_balancer" {
   source = "./modules/load_balancer"
   vpc_id = module.network.vpc_id
 
-  public_subnet_ids = module.network.public_subnet_ids
+  public_subnet_ids  = module.network.public_subnet_ids
   private_subnet_ids = module.network.private_subnet_ids
 
   security_group_ids = [
