@@ -8,7 +8,7 @@
 - **실시간 질의응답 제공:** 사용자 친화적인 인터페이스를 통해 실시간으로 질문에 대한 답변을 제공하고 답변은 자연어 처리 모델을 통해 사용자가 이해하기 쉬운 문장으로 제공됩니다.
 
 ## 사용 예시
-![image](https://github.com/user-attachments/assets/135dd745-afa9-433c-89cc-68287e3437bd)
+![image](https://github.com/user-attachments/assets/d1bd0c3e-c3ab-433b-a986-639b592e9ffe)
 
 ## Amazon Bedrock
 
