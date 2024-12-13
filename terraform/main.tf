@@ -55,3 +55,7 @@ module "load_balancer" {
     module.ec2-instance.api_server_2_id
   ]
 }
+
+module "bedrock" {
+  source = "./modules/bedrock"
+}
