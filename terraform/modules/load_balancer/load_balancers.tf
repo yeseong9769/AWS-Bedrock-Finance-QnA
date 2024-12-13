@@ -3,7 +3,7 @@ resource "aws_lb_target_group" "web_server_tg" {
   name     = "docuQuery-web-server-tg"
   port     = 8080
   protocol = "HTTP"
-  vpc_id   = aws_vpc.docuQuery_vpc.id
+  vpc_id   = var.vpc_id
 
   health_check {
     path                = "/healthz"
@@ -22,13 +22,13 @@ resource "aws_lb_target_group" "web_server_tg" {
 
 resource "aws_lb_target_group_attachment" "web_server_1_attachment" {
   target_group_arn = aws_lb_target_group.web_server_tg.arn
-  target_id        = aws_instance.web_server_1.id
+  target_id        = var.target_id[0]
   port             = 8080
 }
 
 resource "aws_lb_target_group_attachment" "web_server_2_attachment" {
   target_group_arn = aws_lb_target_group.web_server_tg.arn
-  target_id        = aws_instance.web_server_2.id
+  target_id        = var.target_id[1]
   port             = 8080
 }
 
@@ -49,11 +49,8 @@ resource "aws_lb" "public_lb" {
   name               = "docuQuery-public-lb"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.web_server_lb_sg.id]
-  subnets = [
-    aws_subnet.docuQuery_subnet_public1.id,
-    aws_subnet.docuQuery_subnet_public2.id
-  ]
+  security_groups    = [var.security_group_ids[0]]
+  subnets = var.public_subnet_ids
 
   enable_deletion_protection = false
 
@@ -67,7 +64,7 @@ resource "aws_lb_target_group" "api_server_tg" {
   name     = "docuQuery-api-server-tg"
   port     = 8000
   protocol = "HTTP"
-  vpc_id   = aws_vpc.docuQuery_vpc.id
+  vpc_id   = var.vpc_id
 
   health_check {
     path                = "/health"
@@ -86,13 +83,13 @@ resource "aws_lb_target_group" "api_server_tg" {
 
 resource "aws_lb_target_group_attachment" "api_server_1_attachment" {
   target_group_arn = aws_lb_target_group.api_server_tg.arn
-  target_id        = aws_instance.api_server_1.id
+  target_id        = var.target_id[2]
   port             = 8000
 }
 
 resource "aws_lb_target_group_attachment" "api_server_2_attachment" {
   target_group_arn = aws_lb_target_group.api_server_tg.arn
-  target_id        = aws_instance.api_server_2.id
+  target_id        = var.target_id[3]
   port             = 8000
 }
 
@@ -111,10 +108,10 @@ resource "aws_lb" "internal_lb" {
   name               = "docuQuery-internal-lb"
   internal           = true
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.api_server_lb_sg.id]
+  security_groups    = [var.security_group_ids[1]]
   subnets = [
-    aws_subnet.docuQuery_subnet_private1.id,
-    aws_subnet.docuQuery_subnet_private2.id
+    var.private_subnet_ids[0],
+    var.private_subnet_ids[1]
   ]
 
   enable_deletion_protection = false
