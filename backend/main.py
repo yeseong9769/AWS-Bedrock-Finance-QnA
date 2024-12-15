@@ -15,7 +15,7 @@ from uuid import uuid4
 app = FastAPI()
 
 # Configure logging settings
-logging.baseConfig(
+logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s"
 )
