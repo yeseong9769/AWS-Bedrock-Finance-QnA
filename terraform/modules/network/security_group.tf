@@ -8,7 +8,7 @@ resource "aws_security_group" "bastion_host_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["121.168.119.104/32"] # 특정 IP에서만 SSH 허용
+    cidr_blocks = ["218.155.58.38/32"] # 특정 IP에서만 SSH 허용
   }
 
   egress {

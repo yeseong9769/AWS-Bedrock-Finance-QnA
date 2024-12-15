@@ -1,5 +1,6 @@
 import streamlit as st
 import requests
+import json
 
 st.set_page_config(
     page_title='재정정보 질의응답 시스템',
@@ -65,12 +66,15 @@ if prompt := st.chat_input():
                 
                 for line in response.iter_lines():
                     if line:
-                        chunk = eval(line.decode('utf-8'))
-                        if 'response' in chunk:
-                            full_response += chunk['response']
-                            placeholder.markdown(full_response)
-                        else:
-                            full_context = chunk
+                        try:
+                            chunk = json.loads(line.decode('utf-8'))
+                            if 'response' in chunk:
+                                full_response += chunk['response']
+                                placeholder.markdown(full_response)
+                            else:
+                                full_context = chunk
+                        except json.JSONDecodeError:
+                            continue
                             
                 if full_context:
                     with st.expander("출처 문서 보기"): 
