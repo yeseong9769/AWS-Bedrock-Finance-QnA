@@ -5,3 +5,4 @@ boto3
 langchain-core
 langchain-aws
 pydantic
+pydantic_settings

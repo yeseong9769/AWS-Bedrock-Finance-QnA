@@ -3,16 +3,16 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     # Project settings
-    PROJECT_NAME = "Finance QA System"
-    API_V1_STR = "/api/v1"
+    PROJECT_NAME: str = "Finance QA System"
+    API_V1_STR: str = "/api/v1"
     
     # AWS settings
-    AWS_REGION = "us-east-1"
-    MODEL_ID = "anthropic.claude-3-haiku-20240307-v1:0"
-    KNOWLEDGE_BASE_ID = "ZR7PIA4I4M"
+    AWS_REGION: str = "us-east-1"
+    MODEL_ID: str = "anthropic.claude-3-haiku-20240307-v1:0"
+    KNOWLEDGE_BASE_ID: str = "ZR7PIA4I4M"
     
     # Model configuration
-    MODEL_KWARGS = {
+    MODEL_KWARGS: dict = {
         "max_tokens": 2048,
         "temperature": 0.3,
         "top_k": 5,
@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     }
 
     # Prompt template
-    PROMPT = """
+    PROMPT: str = """
         "task_instructions" : [
         당신은 재정 정보 관련 전문가 입니다. 문서를 바탕으로 질문에 한 문장 이내로 답변하세요.
         1. 문서에 있는 내용을 자르거나 편집하지 않고 그대로 가져오세요.
