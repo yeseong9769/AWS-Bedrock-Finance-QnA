@@ -1,6 +1,5 @@
 import streamlit as st
 import requests
-import json
 
 st.set_page_config(
     page_title='재정정보 질의응답 시스템',
@@ -51,35 +50,18 @@ if prompt := st.chat_input():
         st.write(prompt)
 
     try:
-        # 스트리밍 모드
         with st.chat_message("assistant"):
-            placeholder = st.empty()
             with st.spinner('응답 생성 중...'):
                 response = requests.post(
-                    f"{BACKEND_URL}/chat/stream",
+                    f"{BACKEND_URL}/chat",
                     json={"prompt": prompt},
-                    stream=True,
                     timeout=30
-                )
-                full_response = ''
-                full_context = None
+                ).json()
                 
-                for line in response.iter_lines():
-                    if line:
-                        try:
-                            chunk = json.loads(line.decode('utf-8'))
-                            if 'response' in chunk:
-                                full_response += chunk['response']
-                                placeholder.markdown(full_response)
-                            else:
-                                full_context = chunk
-                        except json.JSONDecodeError:
-                            continue
-                            
-                if full_context:
-                    with st.expander("출처 문서 보기"): 
-                        st.write(full_context)
-                st.session_state.messages.append({"role": "assistant", "content": full_response})
+                st.write(response['response'])
+                with st.expander("출처 문서 보기"): 
+                    st.write(response['context'])
+                st.session_state.messages.append({"role": "assistant", "content": response['response']})
 
     except requests.exceptions.Timeout:
         st.error("요청 시간이 초과되었습니다. 잠시 후 다시 시도해주세요.")
